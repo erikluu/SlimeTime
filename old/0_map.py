@@ -1,6 +1,6 @@
 import pygame as pg
 import math
-import AxialHexagon as hc
+import old.AxialHexagon as hc
 
 pg.init()
 

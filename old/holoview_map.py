@@ -1,7 +1,7 @@
 import holoviews as hv
 from holoviews import opts
 
-import AxialHexagon as hexagon
+import old.AxialHexagon as hexagon
 
 hv.extension('bokeh')
 

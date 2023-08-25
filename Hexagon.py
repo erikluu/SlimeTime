@@ -1,18 +1,22 @@
+# Axial Coordinates
+
 class Hexagon:
-    def __init__(self, q, r, value=0, color='white'):
+    def __init__(self, q, r, color=.5):
         self.q = q
         self.r = r
-        self.neigbors = []
         self.color = color
+        self.neighbors = []
 
     def __repr__(self):
         return f'({self.q}, {self.r})'
+
+    def add_neighbor(self, key):
+        self.neighbors.append(key)
 
 class HexagonGrid:
     def __init__(self, radius):
         self.radius = radius
         self.hexagons = self.generate_hexagons() # dict
-        self.adjacecny_matrix = self.generate_adjacency_matrix()
         
     def generate_hexagons(self):
         radius = self.radius
@@ -31,27 +35,34 @@ class HexagonGrid:
             for r in range(-q, radius - q):
                 hexagons[f"{q},{r}"] = Hexagon(q, r)
 
+        hexagons = self.generate_adjacency_matrix(hexagons)
+
         return hexagons
     
-    def generate_adjacency_matrix(self):
-        adjacency_matrix = {}
-        
+    def generate_adjacency_matrix(self, hexagons):
         directions = [(0, -1), (1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0)]
-        for key, value in self.hexagons.items(): 
-            neighbors = []
-            q = value.q
-            r = value.r
-            for direction in directions:
-                new_key = f"{q+direction[0]},{r+direction[1]}"
-                if new_key in self.hexagons:
-                    neighbors.append(self.hexagons[new_key])
 
-            adjacency_matrix[key] = neighbors 
-        
-        return adjacency_matrix
+        for key in hexagons: 
+            hexagon = hexagons[key]
+            for direction in directions:
+                new_key = f"{hexagon.q+direction[0]},{hexagon.r+direction[1]}"
+                if new_key in hexagons:
+                    hexagons[key].add_neighbor(new_key)
+
+        return hexagons
 
 # Example usage
-grid = HexagonGrid(radius=3)
-print(grid.hexagons)
-adjacency_matrix = grid.generate_adjacency_matrix()
-print(adjacency_matrix)
+# grid = HexagonGrid(radius=3)
+# for key in grid.hexagons:
+#     hex = grid.hexagons[key]
+#     neighbors = hex.neighbors
+#     print(f"{key}: {neighbors}")
+
+
+
+
+
+
+
+
+

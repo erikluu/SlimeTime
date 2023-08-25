@@ -1,33 +1,70 @@
 from bokeh.io import curdoc, show
-from bokeh.models import ColumnDataSource, Grid, HexTile, LinearAxis, Plot
-import numpy as np
-from Hexagon import Hexagon, HexagonGrid
+from bokeh.models import ColumnDataSource, LinearColorMapper, HoverTool, CustomJS
+from bokeh.plotting import figure
+from bokeh.palettes import Viridis256
 
-radius = 5
-hexagon_grid = HexagonGrid(radius)
+from Hexagon import Hexagon, HexagonGrid 
+
+# Init hexagon grid
+RADIUS = 20
+hexagon_grid = HexagonGrid(RADIUS)
 hexagons = hexagon_grid.hexagons
 
+# Init data source
 source = ColumnDataSource(data=dict(
-    q=[hexagon.q for hexagon in hexagons],
-    r=[hexagon.r for hexagon in hexagons],
+    q=[h.q for h in hexagons.values()],
+    r=[h.r for h in hexagons.values()],
+    colors=[h.color for h in hexagons.values()]
 ))
 
-plot = Plot(
-    title=None, width=800, height=800,
-    min_border=0, toolbar_location=None)
+# Create plot
+plot = figure(width=800, height=800)
 
-glyph = HexTile(q="q", r="r", size=1, fill_color="#fb9a99", line_color="white")
-plot.add_glyph(source, glyph)
+# Create color mapper
+color_mapper = LinearColorMapper(palette=Viridis256, low=0, high=1)
 
-xaxis = LinearAxis()
-plot.add_layout(xaxis, 'below')
+# Add hex tile glyphs
+glyph = plot.hex_tile(q='q', r='r', fill_color='colors', source=source, line_color=None)
 
-yaxis = LinearAxis()
-plot.add_layout(yaxis, 'left')
+# Set up hover tool
+hover = HoverTool()
+plot.add_tools(hover)
 
-plot.add_layout(Grid(dimension=0, ticker=xaxis.ticker))
-plot.add_layout(Grid(dimension=1, ticker=yaxis.ticker))
+# Hover callback 
+hover_callback = CustomJS(code="""
+    // Code to highlight hovered hexagon
+""")
+hover.callback = hover_callback
 
+# Callback when data changes
+def update(attr, old, new):
+    source.trigger('change', 'data', old, new)
+
+source.on_change('data', update) 
+
+# Function to update data
+def update_data(new_hexagons):
+    old_colors = source.data['colors']
+    new_colors = [h.color + .1 for h in new_hexagons.values()]
+
+    old_data = source.data
+    new_data = dict(
+        q=old_data['q'],
+        r=old_data['r'],
+        colors=new_colors
+    )
+    source.data = new_data
+
+    source.trigger('change', 'data', old_colors, new_colors)
+
+# Set up layout
 curdoc().add_root(plot)
 
+# Display plot
 show(plot)
+
+# Initial data
+# update_data(hexagons)
+
+# Call update_data(new_data) when data change
+
