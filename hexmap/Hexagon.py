@@ -1,7 +1,16 @@
 # Axial Coordinates
+import math
+
+BLACK = (0, 0, 0)
+DARK_GREY = (30, 30, 30)
+OFF_WHITE = (255, 255, 240)
+DARK_BEIGE = (139, 121, 94)
+DARK_MAGENTA = (139, 0, 139)
+MAROON = (128, 0, 0)
+FOREST_GREEN = (34, 139, 34)
 
 class Hexagon:
-    def __init__(self, q, r, color=.5):
+    def __init__(self, q, r, color=(0, 255, 0)):
         self.q = q
         self.r = r
         self.color = color
@@ -12,6 +21,20 @@ class Hexagon:
 
     def add_neighbor(self, key):
         self.neighbors.append(key)
+    
+    def get_vertices(self, hexagon_size):
+        x = hexagon_size * 3/2 * self.q
+        y = hexagon_size * (math.sqrt(3) / 2 * self.q + math.sqrt(3) * self.r)
+        
+        vertices = []
+        for i in range(6):
+            angle_deg = 60 * i
+            angle_rad = math.pi / 180 * angle_deg
+            vertex_x = x + hexagon_size * math.cos(angle_rad)
+            vertex_y = y + hexagon_size * math.sin(angle_rad)
+            vertices.append((vertex_x, vertex_y))
+        
+        return vertices
 
 class HexagonGrid:
     def __init__(self, radius):
@@ -50,6 +73,9 @@ class HexagonGrid:
                     hexagons[key].add_neighbor(new_key)
 
         return hexagons
+
+
+
 
 # Example usage
 # grid = HexagonGrid(radius=3)

@@ -1,22 +1,52 @@
-from bokeh.io import curdoc, show
-from bokeh.models import ColumnDataSource, Grid, HexTile, LinearAxis, Plot
-import numpy as np
-from Hexagon import Hexagon, HexagonGrid
+import pygame
+from Hexagon import HexagonGrid
+from Hexagon import BLACK, DARK_GREY, OFF_WHITE, DARK_BEIGE, DARK_MAGENTA, MAROON, FOREST_GREEN
 
-radius = 10
-hexagon_grid = HexagonGrid(radius)
-hexagons = hexagon_grid.hexagons
+RADIUS = 20
+HEXAGON_SIZE = 10
 
-source = ColumnDataSource(data=dict(
-    q=[hexagon.q for hexagon in hexagons.values()],
-    r=[hexagon.r for hexagon in hexagons.values()],
-))
+def update_hexagon_state(hexagon):
+    # Update the state of a hexagon in pygame
+    # Your code here to update the state of the hexagon
+    pass
 
-plot = Plot(
-    title=None, width=800, height=800,
-    min_border=0, toolbar_location=None)
+def update_screen(screen, hexagons):
+    screen.fill(DARK_GREY)  # Clear the screen with white color
+    for hexagon in hexagons.values():
+        vertices = hexagon.get_vertices(HEXAGON_SIZE)
+        shifted_vertices = [(x + screen.get_width() / 2, y + screen.get_height() / 2) for x, y in vertices]
+        pygame.draw.polygon(screen, hexagon.color, shifted_vertices, 0)
+        pygame.draw.polygon(screen, BLACK, shifted_vertices, 1)
+        
+    return screen
 
-glyph = HexTile(q="q", r="r", size=1, fill_color="#fb9a99", line_color="white")
-plot.add_glyph(source, glyph)
+def main():
+    grid = HexagonGrid(RADIUS)
+    hexagons = grid.hexagons
 
-show(plot)
+    pygame.init()
+    screen = pygame.display.set_mode((800, 800))
+    clock = pygame.time.Clock()
+    
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Get the clicked hexagon and update its state
+                mouse_pos = pygame.mouse.get_pos()
+                for hexagon in hexagons:
+                    if hexagon.contains_point(mouse_pos):                        
+                        update_hexagon_state(hexagon)
+                        break
+        
+        screen = update_screen(screen, hexagons)
+        pygame.display.flip()
+        clock.tick(60)
+    
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
+
