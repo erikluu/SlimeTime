@@ -10,9 +10,11 @@ MAROON = (128, 0, 0)
 FOREST_GREEN = (34, 139, 34)
 
 class Hexagon:
-    def __init__(self, q, r, color=(0, 255, 0)):
+    def __init__(self, q, r, color=OFF_WHITE):
         self.q = q
         self.r = r
+        self.x = None
+        self.y = None
         self.color = color
         self.neighbors = []
 
@@ -23,18 +25,20 @@ class Hexagon:
         self.neighbors.append(key)
     
     def get_vertices(self, hexagon_size):
-        x = hexagon_size * 3/2 * self.q
-        y = hexagon_size * (math.sqrt(3) / 2 * self.q + math.sqrt(3) * self.r)
+        self.x = hexagon_size * 3/2 * self.q
+        self.y = hexagon_size * (math.sqrt(3) / 2 * self.q + math.sqrt(3) * self.r)
         
         vertices = []
         for i in range(6):
             angle_deg = 60 * i
             angle_rad = math.pi / 180 * angle_deg
-            vertex_x = x + hexagon_size * math.cos(angle_rad)
-            vertex_y = y + hexagon_size * math.sin(angle_rad)
+            vertex_x = self.x + hexagon_size * math.cos(angle_rad)
+            vertex_y = self.y + hexagon_size * math.sin(angle_rad)
             vertices.append((vertex_x, vertex_y))
         
         return vertices
+
+    
 
 class HexagonGrid:
     def __init__(self, radius):

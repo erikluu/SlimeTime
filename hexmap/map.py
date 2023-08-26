@@ -36,10 +36,8 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Get the clicked hexagon and update its state
                 mouse_pos = pygame.mouse.get_pos()
-                for hexagon in hexagons:
-                    if hexagon.contains_point(mouse_pos):                        
-                        update_hexagon_state(hexagon)
-                        break
+                clicked_hexagon = grid.hexagon_clicked(mouse_pos)
+                update_hexagon_state(clicked_hexagon) # TODOOOOOOOOOOOOOOOOOOOOOOO
         
         screen = update_screen(screen, hexagons)
         pygame.display.flip()
