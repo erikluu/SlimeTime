@@ -9,6 +9,7 @@ DARK_MAGENTA = (139, 0, 139)
 MAROON = (128, 0, 0)
 FOREST_GREEN = (34, 139, 34)
 YELLOW = (255, 255, 0)
+NAVY_BLUE = (0, 0, 128)
 
 
 class Hexagon:

@@ -1,8 +1,8 @@
 import pygame
 from Hexagon import HexagonGrid
-from Hexagon import BLACK, DARK_GREY, OFF_WHITE, DARK_BEIGE, DARK_MAGENTA, MAROON, FOREST_GREEN, YELLOW
+from Hexagon import BLACK, DARK_GREY, OFF_WHITE, DARK_BEIGE, DARK_MAGENTA, MAROON, FOREST_GREEN, YELLOW, NAVY_BLUE
 
-COLOR_OPTIONS = [OFF_WHITE, BLACK, DARK_BEIGE, DARK_MAGENTA, MAROON, FOREST_GREEN]
+COLOR_OPTIONS = [OFF_WHITE, BLACK, DARK_BEIGE, DARK_MAGENTA, MAROON, FOREST_GREEN, NAVY_BLUE]
 
 RADIUS = 20
 HEXAGON_SIZE = 10
@@ -15,7 +15,7 @@ COLOR_BAR_Y = 0
 COLOR_BAR_SPACING = COLOR_BAR_HEIGHT // (len(COLOR_OPTIONS))  # Add 1 to the denominator to create spacing between the rectangles
 
 # Define a list of colors to choose from
-selected_color = MAROON
+selected_color = None
 color_buttons = [
     pygame.Rect(COLOR_BAR_X, COLOR_BAR_Y + i * COLOR_BAR_SPACING, COLOR_BAR_WIDTH, COLOR_BAR_HEIGHT // len(COLOR_OPTIONS))
     for i in range(len(COLOR_OPTIONS))
@@ -35,7 +35,6 @@ def update_screen(screen, hexagons):
             pygame.draw.rect(screen, YELLOW, button, 3)
         else:
             pygame.draw.rect(screen, COLOR_OPTIONS[i], button)
-
     
     # Draw the hexagons
     for hexagon in hexagons.values():
@@ -64,7 +63,7 @@ def main():
                 if event.button == 1:
                     mouse_pos = pygame.mouse.get_pos()
                     for i, button in enumerate(color_buttons):
-                        if button.collidepoint(mouse_pos) and i != 4:
+                        if button.collidepoint(mouse_pos):
                             selected_color = COLOR_OPTIONS[i]
             elif event.type == pygame.MOUSEMOTION and pygame.mouse.get_pressed()[0]:
                 # Get the clicked hexagon and update its state
